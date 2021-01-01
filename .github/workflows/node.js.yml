@@ -12,7 +12,18 @@ on:
 
 jobs:
   build:
-#our template workflow defines a single job with the identifier build
+#job 1 with the identifier build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: npm install and build webpack
+        run: |
+          npm install
+          npm run build
+          
+  test:
+#job 2 with the identifier test
     name: CI node action
     runs-on: ubuntu-latest
 
@@ -29,9 +40,12 @@ jobs:
   #used to set up proper versions of Node.js since we'll be performing testing against multiple versions.
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - name: npm install, and test
+      run: |
+        npm install
+        npm test
+      env:
+        CI: true
 #Workflow: A workflow is a unit of automation from start to finish, including the definition of what triggers the automation, what environment or other aspects should be taken account during the automation, and what should happen as a result of the trigger.
 #Job: A job is a section of the workflow, and is made up of one or more steps. In this section of our workflow, the template defines the steps that make up the build job.
 #Step: A step represents one effect of the automation. A step could be defined as a GitHub Action, or another unit, like printing something to the console.
