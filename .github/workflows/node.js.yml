@@ -22,8 +22,9 @@ jobs:
           npm install
           npm run build
       - uses: actions/upload-artifact@main
-#Artifacts allow you to persist data after a job has completed, and share that data with another job in the same workflow. An artifact is a file or collection of files produced during a workflow run.
-
+#Artifacts allow you to persist data after a job has completed, and share that data with another job in the same workflow. 
+#An artifact is a file or collection of files produced during a workflow run.
+#To upload artifacts to the artifact storage, we can use an action built by GitHub: actions/upload-artifacts.
 To upload artifacts to the artifact storage, we can use an action built by GitHub: actions/upload-artifacts.
         with:
           name: webpack artifacts
@@ -31,8 +32,9 @@ To upload artifacts to the artifact storage, we can use an action built by GitHu
   test:
 #job 2 with the identifier test
     name: CI node action
+    needs:build
+  # Configure the test job to run only after the build job is completed
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
         os: [ubuntu-latest, windows-2016]
@@ -41,6 +43,7 @@ To upload artifacts to the artifact storage, we can use an action built by GitHu
     steps:
     - uses: actions/checkout@v2
   #used to ensure our virtual machine has a copy of our codebase. The checked out code will be used to run tests against.
+    - uses: actions/download-artifact@main
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
   #used to set up proper versions of Node.js since we'll be performing testing against multiple versions.
