@@ -31,7 +31,7 @@ jobs:
   test:
 #job 2 with the identifier test
     name: CI node action
-    needs:build
+    needs: build
   # Configure the test job to run only after the build job is completed
     runs-on: ubuntu-latest
     strategy:
