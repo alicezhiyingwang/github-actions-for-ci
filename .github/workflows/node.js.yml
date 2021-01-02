@@ -43,6 +43,10 @@ jobs:
     - uses: actions/checkout@v2
   #used to ensure our virtual machine has a copy of our codebase. The checked out code will be used to run tests against.
     - uses: actions/download-artifact@main
+      with:
+        name: webpack artifacts
+        path: public
+    - name: npm install, and test
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
   #used to set up proper versions of Node.js since we'll be performing testing against multiple versions.
