@@ -12,25 +12,51 @@ on:
 
 jobs:
   build:
-#our template workflow defines a single job with the identifier build
-    name: CI node action
+#job 1 with the identifier build
     runs-on: ubuntu-latest
 
+    steps:
+      - uses: actions/checkout@v2
+      - name: npm install and build webpack
+        run: |
+          npm install
+          npm run build
+      - uses: actions/upload-artifact@main
+#Artifacts allow you to persist data after a job has completed, and share that data with another job in the same workflow. 
+#An artifact is a file or collection of files produced during a workflow run.
+#To upload artifacts to the artifact storage, we can use an action built by GitHub: actions/upload-artifacts.
+        with:
+          name: webpack artifacts
+          path: public/      
+  test:
+#job 2 with the identifier test
+    name: CI node action
+    needs: build
+  # Configure the test job to run only after the build job is completed
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x]
+        os: [ubuntu-latest, windows-2016]
+        node-version: [12.x, 14.x]
 
     steps:
     - uses: actions/checkout@v2
   #used to ensure our virtual machine has a copy of our codebase. The checked out code will be used to run tests against.
+    - uses: actions/download-artifact@main
+      with:
+        name: webpack artifacts
+        path: public
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v1
   #used to set up proper versions of Node.js since we'll be performing testing against multiple versions.
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+    - name: npm install, and test
+      run: |
+        npm install
+        npm test
+      env:
+        CI: true
 #Workflow: A workflow is a unit of automation from start to finish, including the definition of what triggers the automation, what environment or other aspects should be taken account during the automation, and what should happen as a result of the trigger.
 #Job: A job is a section of the workflow, and is made up of one or more steps. In this section of our workflow, the template defines the steps that make up the build job.
 #Step: A step represents one effect of the automation. A step could be defined as a GitHub Action, or another unit, like printing something to the console.
