@@ -6,7 +6,7 @@ if (!p1) {
 } else {
   alert(p1)
 }
-
+alert ("hello")
 while (!p2 && p1 !== p2) {
   p2 = window.prompt(p1 === p2
     ? `Please enter a different name than ${p1}.`
